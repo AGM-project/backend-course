@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Shopping Cart API (REST API Express.js)
-  description: Dokumentasi API untuk Shopping Cart.
+  description: Documentation for Shopping Cart API.
   version: 1.0.0
 servers:
   - url: http://localhost:3000
@@ -12,7 +12,7 @@ paths:
     get:
       summary: Get all products
       responses:
-        '200':
+        "200":
           description: List of products
           content:
             application/json:
@@ -57,7 +57,7 @@ paths:
                   type: integer
                   example: 10
       responses:
-        '201':
+        "201":
           description: Product created successfully
           content:
             application/json:
@@ -85,7 +85,7 @@ paths:
             type: integer
           description: ID of the product
       responses:
-        '200':
+        "200":
           description: Product details
           content:
             application/json:
@@ -130,7 +130,7 @@ paths:
                   type: integer
                   example: 15
       responses:
-        '200':
+        "200":
           description: Product updated successfully
           content:
             application/json:
@@ -157,7 +157,7 @@ paths:
             type: integer
           description: ID of the product to delete
       responses:
-        '200':
+        "200":
           description: Product deleted successfully
           content:
             application/json:
@@ -167,3 +167,181 @@ paths:
                   message:
                     type: string
                     example: "Product deleted"
+
+  /cart:
+    get:
+      summary: Get user's cart
+      responses:
+        "200":
+          description: User's cart details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  CartID:
+                    type: integer
+                    example: 1
+                  UserID:
+                    type: integer
+                    example: 101
+                  Items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ProductID:
+                          type: integer
+                          example: 1
+                        Quantity:
+                          type: integer
+                          example: 2
+
+  /cart/{cartId}/items:
+    post:
+      summary: Add an item to the cart
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the cart
+      requestBody:
+        description: Item to be added to the cart
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ProductID
+                - Quantity
+              properties:
+                ProductID:
+                  type: integer
+                  example: 1
+                Quantity:
+                  type: integer
+                  example: 2
+      responses:
+        "201":
+          description: Item added to the cart
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Item added to cart"
+
+  /orders:
+    get:
+      summary: Get all orders
+      responses:
+        "200":
+          description: List of all orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    OrderID:
+                      type: integer
+                      example: 1
+                    UserID:
+                      type: integer
+                      example: 101
+                    TotalAmount:
+                      type: number
+                      example: 299.99
+
+  /orders/{orderId}:
+    get:
+      summary: Get order by ID
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the order
+      responses:
+        "200":
+          description: Order details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  OrderID:
+                    type: integer
+                    example: 1
+                  UserID:
+                    type: integer
+                    example: 101
+                  TotalAmount:
+                    type: number
+                    example: 299.99
+
+  /addresses:
+    get:
+      summary: Get user's address
+      responses:
+        "200":
+          description: List of user's addresses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    AddressID:
+                      type: integer
+                      example: 1
+                    UserID:
+                      type: integer
+                      example: 101
+                    Street:
+                      type: string
+                      example: "123 Main St"
+                    City:
+                      type: string
+                      example: "New York"
+                    PostalCode:
+                      type: string
+                      example: "10001"
+
+  /addresses/{addressId}:
+    get:
+      summary: Get address by ID
+      parameters:
+        - name: addressId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the address
+      responses:
+        "200":
+          description: Address details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  AddressID:
+                    type: integer
+                    example: 1
+                  Street:
+                    type: string
+                    example: "123 Main St"
+                  City:
+                    type: string
+                    example: "New York"
+                  PostalCode:
+                    type: string
+                    example: "10001"
