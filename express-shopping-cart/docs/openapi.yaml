@@ -1,0 +1,169 @@
+openapi: 3.1.0
+info:
+  title: Shopping Cart API (REST API Express.js)
+  description: Dokumentasi API untuk Shopping Cart.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local server
+
+paths:
+  /products:
+    get:
+      summary: Get all products
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    ProductID:
+                      type: integer
+                      example: 1
+                    Name:
+                      type: string
+                      example: "Laptop"
+                    Price:
+                      type: number
+                      example: 999.99
+
+    post:
+      summary: Create a new product
+      requestBody:
+        description: Product details to be added
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - Name
+                - Price
+                - Stock
+              properties:
+                Name:
+                  type: string
+                  example: "New Laptop"
+                Description:
+                  type: string
+                  example: "High-performance laptop"
+                Price:
+                  type: number
+                  example: 1299.99
+                Stock:
+                  type: integer
+                  example: 10
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ProductID:
+                    type: integer
+                    example: 2
+                  Name:
+                    type: string
+                    example: "New Laptop"
+                  Price:
+                    type: number
+                    example: 1299.99
+
+  /products/{productId}:
+    get:
+      summary: Get product by ID
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ProductID:
+                    type: integer
+                    example: 1
+                  Name:
+                    type: string
+                    example: "Laptop"
+                  Price:
+                    type: number
+                    example: 999.99
+    put:
+      summary: Update an existing product
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product to update
+      requestBody:
+        description: Updated product details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Name:
+                  type: string
+                  example: "Updated Laptop"
+                Description:
+                  type: string
+                  example: "Updated description"
+                Price:
+                  type: number
+                  example: 1499.99
+                Stock:
+                  type: integer
+                  example: 15
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ProductID:
+                    type: integer
+                    example: 1
+                  Name:
+                    type: string
+                    example: "Updated Laptop"
+                  Price:
+                    type: number
+                    example: 1499.99
+
+    delete:
+      summary: Delete a product
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product to delete
+      responses:
+        '200':
+          description: Product deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product deleted"
