@@ -1,5 +1,38 @@
-lat/
-simple-http/
+# Node modules directory
 **/node_modules/
-**/pack
-**/package-lock.json
+
+# Logs
+*.log
+**/logs/
+
+# Environment variables
+**/.env
+
+# npm debug log
+npm-debug.log*
+
+# Yarn error logs
+yarn-error.log*
+
+# OS-specific files
+**/.DS_Store
+**/Thumbs.db
+
+# IDE/editor-specific files
+**/.vscode/
+**/.idea/
+
+# Optional npm package folders
+**/.eslintcache
+**/.cache/
+
+# Build output
+**/dist/
+**/build/
+
+# Test coverage reports
+**/coverage/
+
+# Optional lock files if using yarn or pnpm
+**/yarn.lock
+**/pnpm-lock.yaml
