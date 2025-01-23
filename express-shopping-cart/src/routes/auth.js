@@ -2,11 +2,12 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Users = require("../models/Users");
+const { postValidateInput } = require('../controllers/apiController');
 
 const router = express.Router();
 
 // Register user
-router.post("/register", async (req, res) => {
+router.post("/register", postValidateInput, async (req, res) => {
   const { email, name, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await Users.create({ Email: email, Name: name, Password: hashedPassword });
