@@ -26,15 +26,15 @@ router.get("/:id", verifyToken, async (req, res) => {
 });
 
 // Create a new order
-router.post("/", verifyToken, async (req, res) => {
-  try {
-    const { CartID, TotalAmount } = req.body;
-    const order = await Order.create({ CartID, TotalAmount });
-    res.status(201).json(order);
-  } catch (err) {
-    res.status(500).json({ message: "Internal Server Error", error: err.message });
-  }
-});
+// router.post("/", verifyToken, async (req, res) => {
+//   try {
+//     const { CartID, TotalAmount } = req.body;
+//     const order = await Order.create({ CartID, TotalAmount });
+//     res.status(201).json(order);
+//   } catch (err) {
+//     res.status(500).json({ message: "Internal Server Error", error: err.message });
+//   }
+// });
 
 // Update an order
 // router.put('/:id', async (req, res) => {

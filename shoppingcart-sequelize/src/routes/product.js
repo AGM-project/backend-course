@@ -59,7 +59,7 @@ router.get("/filter/:price/:minStock", verifyToken, async (req, res) => {
     // Query produk dengan filter price dan minimum stock
     const products = await Product.findAll({
       where: {
-        Price: price,
+        Price: { [Op.lte]: price },
         Stock: { [Op.gte]: minStock }, // Menggunakan operator greater than or equal
       },
     });

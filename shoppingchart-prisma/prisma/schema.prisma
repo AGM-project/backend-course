@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Addresses {
-  AddressID    Int     @id(map: "PK__Addresse__091C2A1B7B27597E") @default(autoincrement())
+  AddressID    Int     @id(map: "PK__Addresse__091C2A1B15B577A8") @default(autoincrement())
   CartID       Int
   AddressLine1 String  @db.NVarChar(255)
   AddressLine2 String? @db.NVarChar(255)
@@ -18,15 +18,8 @@ model Addresses {
   Carts        Carts   @relation(fields: [CartID], references: [CartID], onUpdate: NoAction, map: "FK__Addresses__CartI__4316F928")
 }
 
-model Cart {
-  id        Int       @id(map: "PK__Cart__3213E83F6337C8B1") @default(autoincrement())
-  CartID    Int
-  CreatedAt DateTime? @db.DateTimeOffset
-  UpdatedAt DateTime? @db.DateTimeOffset
-}
-
 model CartItems {
-  CartItemID Int      @id(map: "PK__CartItem__488B0B2A8B0C37CC") @default(autoincrement())
+  CartItemID Int      @id(map: "PK__CartItem__488B0B2AC9DA49F1") @default(autoincrement())
   CartID     Int
   ProductID  Int
   Quantity   Int
@@ -35,7 +28,7 @@ model CartItems {
 }
 
 model Carts {
-  CartID    Int         @id(map: "PK__Carts__51BCD79780591DD2") @default(autoincrement())
+  CartID    Int         @id(map: "PK__Carts__51BCD79706E882EE") @default(autoincrement())
   CreatedAt DateTime?   @default(now(), map: "DF__Carts__CreatedAt__3B75D760") @db.DateTime
   updatedAt DateTime?   @default(now(), map: "DF__Carts__updatedAt__3C69FB99") @db.DateTime
   Addresses Addresses[]
@@ -44,7 +37,7 @@ model Carts {
 }
 
 model Orders {
-  OrderID     Int       @id(map: "PK__Orders__C3905BAF21CA29D9") @default(autoincrement())
+  OrderID     Int       @id(map: "PK__Orders__C3905BAF38441150") @default(autoincrement())
   CartID      Int
   OrderDate   DateTime? @default(now(), map: "DF__Orders__OrderDat__45F365D3") @db.DateTime
   TotalAmount Decimal?  @db.Decimal(10, 2)
@@ -52,7 +45,7 @@ model Orders {
 }
 
 model Products {
-  ProductID   Int         @id(map: "PK__Products__B40CC6ED8937C731") @default(autoincrement())
+  ProductID   Int         @id(map: "PK__Products__B40CC6EDC6F30B42") @default(autoincrement())
   Name        String      @db.NVarChar(100)
   Description String?     @db.NVarChar(Max)
   Price       Decimal     @db.Decimal(10, 2)
@@ -62,11 +55,21 @@ model Products {
   CartItems   CartItems[]
 }
 
+model sysdiagrams {
+  name         String @db.NVarChar(128)
+  principal_id Int
+  diagram_id   Int    @id(map: "PK__sysdiagr__C2B05B61675B76C1") @default(autoincrement())
+  version      Int?
+  definition   Bytes?
+
+  @@unique([principal_id, name], map: "UK_principal_name")
+}
+
 model Users {
   UserID    Int       @id(map: "PK_Users") @default(autoincrement())
-  Email     String?   @db.VarChar(150)
+  Email     String?   @unique @db.VarChar(150)
   Name      String?   @db.Text
-  Password  String?   @db.Text
+  Password  String    @db.Text
   CreatedAt DateTime? @default(now(), map: "DF_Users_CreatedAt") @db.DateTime
   UpdatedAt DateTime? @default(now(), map: "DF_Users_UpdatedAt") @db.DateTime
 }

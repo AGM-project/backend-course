@@ -6,10 +6,12 @@ const cartRouter = require("./src/routes/cart");
 const cartItemRouter = require("./src/routes/cartItems");
 const { authRouter } = require("./src/routes/auth");
 const swaggerUi = require("swagger-ui-express");
+const swaggerJSDoc = require('swagger-jsdoc');
 const fs = require("fs");
 const path = require("path");
 const yaml = require("yaml"); // Tambahkan pustaka YAML
 const rateLimiter = require("./src/utils/rateLimiter");
+
 
 const app = express();
 const PORT = 3000;
@@ -27,10 +29,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// Swagger UI
+/** Swagger UI */
 const swaggerDocumentPath = path.join(__dirname, "docs", "openapi.yaml");
 const swaggerDocument = yaml.parse(fs.readFileSync(swaggerDocumentPath, "utf8")); // Parse YAML
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+/**END of Swagger UI */
 
 // Routes
 app.use("/products", productsRouter);

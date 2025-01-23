@@ -2,18 +2,295 @@ openapi: 3.1.0
 info:
   title: Shopping Cart API (REST API Express.js)
   description: Documentation for Shopping Cart API.
-  version: 1.0.0
-servers:
-  - url: http://localhost:3000
-    description: Local server
+  version: "1.0.0"
 
+tags:
+  - name: Address
+    description: Operasi terkait dengan /address
+  - name: Auth
+    description: Operasi terkait dengan /auth
+  - name: Cart
+    description: Operasi terkait dengan /cart
+  - name: Cart Item
+    description: Operasi terkait dengan /cart-items
+  - name: Product
+    description: Operasi terkait dengan /products
 paths:
+
+#Auth
+  /auth/register:
+    post:
+      summary: Mendaftarkan pengguna baru
+      tags:
+      - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - name
+                - password
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                name:
+                  type: string
+                  example: John Doe
+                password:
+                  type: string
+                  example: password123
+      responses:
+        200:
+          description: Pengguna berhasil didaftarkan
+        400:
+          description: Bad Request
+        500:
+          description: Kesalahan server
+
+  /auth/login:
+    post:
+      summary: Login pengguna
+      tags:
+      - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: password123
+      responses:
+        200:
+          description: Login berhasil, token JWT dikirim
+        400:
+          description: Bad Request
+        401:
+          description: Unauthorized
+        404:
+          description: Pengguna tidak ditemukan
+        500:
+          description: Kesalahan server
+
+  /auth/profile:
+    get:
+      summary: Mendapatkan profil pengguna
+      tags:
+      - Auth
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Profil pengguna berhasil didapatkan
+        401:
+          description: Token tidak valid atau tidak ada
+        500:
+          description: Kesalahan server
+
+#Address
+  /address:
+    get:
+      summary: Mendapatkan semua alamat
+      tags:
+      - Address
+      description: Endpoint untuk mendapatkan semua alamat dari database.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Daftar alamat berhasil ditemukan
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    AddressID:
+                      type: integer
+                    CartID:
+                      type: integer
+                    AddressLine1:
+                      type: string
+                    AddressLine2:
+                      type: string
+                    City:
+                      type: string
+                    State:
+                      type: string
+                    ZipCode:
+                      type: string
+        '500':
+          description: Kesalahan server
+
+    post:
+      summary: Menambahkan alamat baru
+      tags:
+      - Address
+      description: Endpoint untuk menambahkan alamat baru ke dalam sistem.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - CartID
+                - AddressLine1
+                - AddressLine2
+                - City
+                - State
+                - ZipCode
+              properties:
+                CartID:
+                  type: integer
+                AddressLine1:
+                  type: string
+                AddressLine2:
+                  type: string
+                City:
+                  type: string
+                State:
+                  type: string
+                ZipCode:
+                  type: string
+      responses:
+        '201':
+          description: Alamat berhasil ditambahkan
+        '500':
+          description: Kesalahan server
+
+  /address/{id}:
+    get:
+      summary: Mendapatkan alamat berdasarkan ID
+      tags:
+      - Address
+      description: Endpoint untuk mendapatkan alamat berdasarkan ID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID alamat yang akan dicari
+      responses:
+        '200':
+          description: Alamat berhasil ditemukan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  AddressID:
+                    type: integer
+                  CartID:
+                    type: integer
+                  AddressLine1:
+                    type: string
+                  AddressLine2:
+                    type: string
+                  City:
+                    type: string
+                  State:
+                    type: string
+                  ZipCode:
+                    type: string
+        '404':
+          description: Alamat tidak ditemukan
+        '500':
+          description: Kesalahan server
+
+    put:
+      summary: Mengupdate alamat berdasarkan ID
+      tags:
+      - Address
+      description: Endpoint untuk memperbarui alamat berdasarkan ID yang diberikan.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID alamat yang akan diperbarui
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                CartID:
+                  type: integer
+                AddressLine1:
+                  type: string
+                AddressLine2:
+                  type: string
+                City:
+                  type: string
+                State:
+                  type: string
+                ZipCode:
+                  type: string
+      responses:
+        '200':
+          description: Alamat berhasil diperbarui
+        '404':
+          description: Alamat tidak ditemukan
+        '500':
+          description: Kesalahan server
+
+    delete:
+      summary: Menghapus alamat berdasarkan ID
+      tags:
+      - Address
+      description: Endpoint untuk menghapus alamat berdasarkan ID yang diberikan.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID alamat yang akan dihapus
+      responses:
+        '200':
+          description: Alamat berhasil dihapus
+        '404':
+          description: Alamat tidak ditemukan
+        '500':
+          description: Kesalahan server
+
+#Product
   /products:
     get:
-      summary: Get all products
+      summary: Mendapatkan semua produk
+      tags:
+      - Product
+      description: Endpoint untuk mendapatkan semua produk yang ada.
+      security:
+        - bearerAuth: []
       responses:
-        "200":
-          description: List of products
+        '200':
+          description: Daftar produk berhasil ditemukan
           content:
             application/json:
               schema:
@@ -23,70 +300,126 @@ paths:
                   properties:
                     ProductID:
                       type: integer
-                      example: 1
                     Name:
                       type: string
-                      example: "Laptop"
+                    Description:
+                      type: string
                     Price:
                       type: number
-                      example: 999.99
+                      format: float
+                    Stock:
+                      type: integer
+        '500':
+          description: Kesalahan server
 
     post:
-      summary: Create a new product
+      summary: Menambahkan produk baru
+      tags:
+      - Product
+      description: Endpoint untuk menambahkan produk baru ke dalam sistem.
+      security:
+        - bearerAuth: []
       requestBody:
-        description: Product details to be added
+        required: true
         content:
           application/json:
             schema:
               type: object
               required:
                 - Name
+                - Description
                 - Price
                 - Stock
               properties:
                 Name:
                   type: string
-                  example: "New Laptop"
                 Description:
                   type: string
-                  example: "High-performance laptop"
                 Price:
                   type: number
-                  example: 1299.99
+                  format: float
                 Stock:
                   type: integer
-                  example: 10
       responses:
-        "201":
-          description: Product created successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ProductID:
-                    type: integer
-                    example: 2
-                  Name:
-                    type: string
-                    example: "New Laptop"
-                  Price:
-                    type: number
-                    example: 1299.99
+        '201':
+          description: Produk berhasil ditambahkan
+        '500':
+          description: Kesalahan server
 
-  /products/{productId}:
+  /products/paging:
     get:
-      summary: Get product by ID
+      summary: Mendapatkan produk dengan pagination
+      tags:
+      - Product
+      description: Endpoint untuk mendapatkan produk dengan paginasi.
+      security:
+        - bearerAuth: []
       parameters:
-        - name: productId
-          in: path
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Halaman produk yang akan ditampilkan
+        - in: query
+          name: size
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Jumlah produk per halaman
+      responses:
+        '200':
+          description: Daftar produk dengan paginasi berhasil ditemukan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  currentPage:
+                    type: integer
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ProductID:
+                          type: integer
+                        Name:
+                          type: string
+                        Description:
+                          type: string
+                        Price:
+                          type: number
+                          format: float
+                        Stock:
+                          type: integer
+        '500':
+          description: Kesalahan server
+
+  /products/{id}:
+    get:
+      summary: Mendapatkan produk berdasarkan ID
+      tags:
+      - Product
+      description: Endpoint untuk mendapatkan produk berdasarkan ID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
           required: true
           schema:
             type: integer
-          description: ID of the product
+          description: ID produk yang akan dicari
       responses:
-        "200":
-          description: Product details
+        '200':
+          description: Produk berhasil ditemukan
           content:
             application/json:
               schema:
@@ -94,24 +427,36 @@ paths:
                 properties:
                   ProductID:
                     type: integer
-                    example: 1
                   Name:
                     type: string
-                    example: "Laptop"
+                  Description:
+                    type: string
                   Price:
                     type: number
-                    example: 999.99
+                    format: float
+                  Stock:
+                    type: integer
+        '404':
+          description: Produk tidak ditemukan
+        '500':
+          description: Kesalahan server
+
     put:
-      summary: Update an existing product
+      summary: Mengupdate produk berdasarkan ID
+      tags:
+      - Product
+      description: Endpoint untuk memperbarui produk berdasarkan ID yang diberikan.
+      security:
+        - bearerAuth: []
       parameters:
-        - name: productId
-          in: path
+        - in: path
+          name: id
           required: true
           schema:
             type: integer
-          description: ID of the product to update
+          description: ID produk yang akan diperbarui
       requestBody:
-        description: Updated product details
+        required: true
         content:
           application/json:
             schema:
@@ -119,46 +464,154 @@ paths:
               properties:
                 Name:
                   type: string
-                  example: "Updated Laptop"
                 Description:
                   type: string
-                  example: "Updated description"
                 Price:
                   type: number
-                  example: 1499.99
+                  format: float
                 Stock:
                   type: integer
-                  example: 15
       responses:
-        "200":
-          description: Product updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ProductID:
-                    type: integer
-                    example: 1
-                  Name:
-                    type: string
-                    example: "Updated Laptop"
-                  Price:
-                    type: number
-                    example: 1499.99
+        '200':
+          description: Produk berhasil diperbarui
+        '404':
+          description: Produk tidak ditemukan
+        '500':
+          description: Kesalahan server
 
     delete:
-      summary: Delete a product
+      summary: Menghapus produk berdasarkan ID
+      tags:
+      - Product
+      description: Endpoint untuk menghapus produk berdasarkan ID yang diberikan.
+      security:
+        - bearerAuth: []
       parameters:
-        - name: productId
-          in: path
+        - in: path
+          name: id
           required: true
           schema:
             type: integer
-          description: ID of the product to delete
+          description: ID produk yang akan dihapus
       responses:
-        "200":
-          description: Product deleted successfully
+        '200':
+          description: Produk berhasil dihapus
+        '404':
+          description: Produk tidak ditemukan
+        '500':
+          description: Kesalahan server
+
+  /products/filter/{price}/{minStock}:
+    get:
+      summary: Mendapatkan produk berdasarkan harga dan stok minimum
+      tags:
+      - Product
+      description: Endpoint untuk mendapatkan produk dengan filter harga dan stok minimum.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: price
+          required: true
+          schema:
+            type: number
+            format: float
+          description: Harga maksimum produk
+        - in: path
+          name: minStock
+          required: true
+          schema:
+            type: integer
+          description: Stok minimum produk
+      responses:
+        '200':
+          description: Produk berhasil ditemukan
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    ProductID:
+                      type: integer
+                    Name:
+                      type: string
+                    Description:
+                      type: string
+                    Price:
+                      type: number
+                      format: float
+                    Stock:
+                      type: integer
+        '404':
+          description: Produk tidak ditemukan
+        '500':
+          description: Kesalahan server
+
+  /products/filter:
+    post:
+      summary: Mendapatkan produk berdasarkan harga dan stok minimum dengan request body
+      tags:
+      - Product
+      description: Endpoint untuk mendapatkan produk dengan filter harga dan stok minimum menggunakan request body.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - price
+                - minStock
+              properties:
+                price:
+                  type: number
+                  format: float
+                minStock:
+                  type: integer
+      responses:
+        '200':
+          description: Produk berhasil ditemukan
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    ProductID:
+                      type: integer
+                    Name:
+                      type: string
+                    Description:
+                      type: string
+                    Price:
+                      type: number
+                      format: float
+                    Stock:
+                      type: integer
+        '400':
+          description: Harga dan stok minimum diperlukan
+        '404':
+          description: Produk tidak ditemukan
+        '500':
+          description: Kesalahan server
+
+#Cart
+  /cart:
+    get:
+      summary: Mendapatkan semua cart
+      tags:
+      - Cart
+      description: Endpoint untuk mendapatkan semua cart beserta cart items dan produk terkait.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Data cart berhasil ditemukan
           content:
             application/json:
               schema:
@@ -166,49 +619,44 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Product deleted"
-
-  /cart:
-    get:
-      summary: Get user's cart
-      responses:
-        "200":
-          description: User's cart details
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  CartID:
-                    type: integer
-                    example: 1
-                  UserID:
-                    type: integer
-                    example: 101
-                  Items:
+                  data:
                     type: array
                     items:
                       type: object
                       properties:
-                        ProductID:
+                        CartID:
                           type: integer
-                          example: 1
-                        Quantity:
-                          type: integer
-                          example: 2
+                        CartItems:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              ProductID:
+                                type: integer
+                              Quantity:
+                                type: integer
+                              Product:
+                                type: object
+                                properties:
+                                  ProductID:
+                                    type: integer
+                                  Name:
+                                    type: string
+                                  Price:
+                                    type: number
+                                    format: float
+        '500':
+          description: Kesalahan server
 
-  /cart/{cartId}/items:
     post:
-      summary: Add an item to the cart
-      parameters:
-        - name: cartId
-          in: path
-          required: true
-          schema:
-            type: integer
-          description: ID of the cart
+      summary: Menambahkan cart baru
+      tags:
+      - Cart
+      description: Endpoint untuk menambahkan cart baru bersama dengan cart items.
+      security:
+        - bearerAuth: []
       requestBody:
-        description: Item to be added to the cart
+        required: true
         content:
           application/json:
             schema:
@@ -219,13 +667,11 @@ paths:
               properties:
                 ProductID:
                   type: integer
-                  example: 1
                 Quantity:
                   type: integer
-                  example: 2
       responses:
-        "201":
-          description: Item added to the cart
+        '201':
+          description: Cart dan cart item berhasil dibuat
           content:
             application/json:
               schema:
@@ -233,14 +679,117 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Item added to cart"
+                  data:
+                    type: object
+                    properties:
+                      CartID:
+                        type: integer
+                      ProductID:
+                        type: integer
+                      Quantity:
+                        type: integer
+        '500':
+          description: Kesalahan server
 
-  /orders:
+  /cart/{id}:
     get:
-      summary: Get all orders
+      summary: Mendapatkan cart berdasarkan ID
+      tags:
+      - Cart
+      description: Endpoint untuk mendapatkan cart berdasarkan CartID dengan cart items dan produk terkait.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID cart yang akan dicari
       responses:
-        "200":
-          description: List of all orders
+        '200':
+          description: Cart berhasil ditemukan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        CartID:
+                          type: integer
+                        CartItems:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              ProductID:
+                                type: integer
+                              Quantity:
+                                type: integer
+                              Product:
+                                type: object
+                                properties:
+                                  ProductID:
+                                    type: integer
+                                  Name:
+                                    type: string
+                                  Price:
+                                    type: number
+                                    format: float
+        '404':
+          description: Cart tidak ditemukan
+        '500':
+          description: Kesalahan server
+
+    delete:
+      summary: Menghapus cart berdasarkan ID
+      tags:
+      - Cart
+      description: Endpoint untuk menghapus cart dan cart items berdasarkan CartID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID cart yang akan dihapus
+      responses:
+        '200':
+          description: Cart dan cart items berhasil dihapus
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: integer
+        '404':
+          description: Cart tidak ditemukan
+        '500':
+          description: Kesalahan server
+
+#Cart Item
+  /cart-items:
+    get:
+      summary: Mendapatkan semua cart items
+      tags:
+      - Cart Item
+      description: Endpoint untuk mendapatkan semua cart items yang ada.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Data cart items berhasil ditemukan
           content:
             application/json:
               schema:
@@ -248,100 +797,179 @@ paths:
                 items:
                   type: object
                   properties:
-                    OrderID:
+                    CartItemID:
                       type: integer
-                      example: 1
-                    UserID:
+                    CartID:
                       type: integer
-                      example: 101
-                    TotalAmount:
-                      type: number
-                      example: 299.99
+                    ProductID:
+                      type: integer
+                    Quantity:
+                      type: integer
+        '500':
+          description: Kesalahan server
 
-  /orders/{orderId}:
-    get:
-      summary: Get order by ID
-      parameters:
-        - name: orderId
-          in: path
-          required: true
-          schema:
-            type: integer
-          description: ID of the order
+    post:
+      summary: Menambahkan cart item baru
+      tags:
+      - Cart Item
+      description: Endpoint untuk menambahkan cart item baru, atau memperbarui quantity jika cart item sudah ada.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - CartID
+                - ProductID
+                - Quantity
+              properties:
+                CartID:
+                  type: integer
+                ProductID:
+                  type: integer
+                Quantity:
+                  type: integer
       responses:
-        "200":
-          description: Order details
+        '201':
+          description: Cart item berhasil ditambahkan atau diperbarui
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  OrderID:
+                  CartItemID:
                     type: integer
-                    example: 1
-                  UserID:
+                  CartID:
                     type: integer
-                    example: 101
-                  TotalAmount:
-                    type: number
-                    example: 299.99
+                  ProductID:
+                    type: integer
+                  Quantity:
+                    type: integer
+        '500':
+          description: Kesalahan server
 
-  /addresses:
+  /cart-items/{id}:
     get:
-      summary: Get user's address
-      responses:
-        "200":
-          description: List of user's addresses
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    AddressID:
-                      type: integer
-                      example: 1
-                    UserID:
-                      type: integer
-                      example: 101
-                    Street:
-                      type: string
-                      example: "123 Main St"
-                    City:
-                      type: string
-                      example: "New York"
-                    PostalCode:
-                      type: string
-                      example: "10001"
-
-  /addresses/{addressId}:
-    get:
-      summary: Get address by ID
+      summary: Mendapatkan cart item berdasarkan ID
+      tags:
+      - Cart Item
+      description: Endpoint untuk mendapatkan cart item berdasarkan CartItemID.
+      security:
+        - bearerAuth: []
       parameters:
-        - name: addressId
-          in: path
+        - in: path
+          name: id
           required: true
           schema:
             type: integer
-          description: ID of the address
+          description: ID cart item yang akan dicari
       responses:
-        "200":
-          description: Address details
+        '200':
+          description: Cart item berhasil ditemukan
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  AddressID:
+                  CartItemID:
                     type: integer
-                    example: 1
-                  Street:
+                  CartID:
+                    type: integer
+                  ProductID:
+                    type: integer
+                  Quantity:
+                    type: integer
+        '404':
+          description: Cart item tidak ditemukan
+        '500':
+          description: Kesalahan server
+
+    put:
+      summary: Memperbarui cart item berdasarkan ID
+      tags:
+      - Cart Item
+      description: Endpoint untuk memperbarui cart item berdasarkan CartItemID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID cart item yang akan diperbarui
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                CartID:
+                  type: integer
+                ProductID:
+                  type: integer
+                Quantity:
+                  type: integer
+      responses:
+        '200':
+          description: Cart item berhasil diperbarui
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  CartItemID:
+                    type: integer
+                  CartID:
+                    type: integer
+                  ProductID:
+                    type: integer
+                  Quantity:
+                    type: integer
+        '404':
+          description: Cart item tidak ditemukan
+        '500':
+          description: Kesalahan server
+
+    delete:
+      summary: Menghapus cart item berdasarkan ID
+      tags:
+      - Cart Item
+      description: Endpoint untuk menghapus cart item berdasarkan CartItemID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID cart item yang akan dihapus
+      responses:
+        '200':
+          description: Cart item berhasil dihapus
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
                     type: string
-                    example: "123 Main St"
-                  City:
-                    type: string
-                    example: "New York"
-                  PostalCode:
-                    type: string
-                    example: "10001"
+                  data:
+                    type: integer
+        '404':
+          description: Cart item tidak ditemukan
+        '500':
+          description: Kesalahan server
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
