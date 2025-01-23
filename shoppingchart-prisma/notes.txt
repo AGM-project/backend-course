@@ -1,0 +1,2 @@
+prisma client - membuat query secara otomatis dan aman.
+Agar prisma client siap untuk digunakan, harus sudah ada schema prisma / struktur data versi prisma.
